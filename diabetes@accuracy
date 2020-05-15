@@ -1,0 +1,640 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Untitled1.ipynb",
+      "provenance": [],
+      "authorship_tag": "ABX9TyPP1Pff4WIsTCQ/ua3MjH1/",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/19PA1A0518/python-basics/blob/master/diabetes%40accuracy\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Fh88SrFc_Gby",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 402
+        },
+        "outputId": "a3de9a1e-382a-46e6-ae18-2092db9b9b03"
+      },
+      "source": [
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "from sklearn.model_selection import train_test_split \n",
+        "from sklearn.ensemble import AdaBoostClassifier\n",
+        "from sklearn.ensemble import RandomForestClassifier\n",
+        "from sklearn.tree import DecisionTreeClassifier\n",
+        "from sklearn import metrics\n",
+        "ss=pd.read_csv(\"diabetes[1].csv\")\n",
+        "ss"
+      ],
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>Pregnancies</th>\n",
+              "      <th>Glucose</th>\n",
+              "      <th>BloodPressure</th>\n",
+              "      <th>SkinThickness</th>\n",
+              "      <th>Insulin</th>\n",
+              "      <th>BMI</th>\n",
+              "      <th>DiabetesPedigreeFunction</th>\n",
+              "      <th>Age</th>\n",
+              "      <th>Outcome</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>6</td>\n",
+              "      <td>148</td>\n",
+              "      <td>72</td>\n",
+              "      <td>35</td>\n",
+              "      <td>0</td>\n",
+              "      <td>33.6</td>\n",
+              "      <td>0.627</td>\n",
+              "      <td>50</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>1</td>\n",
+              "      <td>85</td>\n",
+              "      <td>66</td>\n",
+              "      <td>29</td>\n",
+              "      <td>0</td>\n",
+              "      <td>26.6</td>\n",
+              "      <td>0.351</td>\n",
+              "      <td>31</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>8</td>\n",
+              "      <td>183</td>\n",
+              "      <td>64</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>23.3</td>\n",
+              "      <td>0.672</td>\n",
+              "      <td>32</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>1</td>\n",
+              "      <td>89</td>\n",
+              "      <td>66</td>\n",
+              "      <td>23</td>\n",
+              "      <td>94</td>\n",
+              "      <td>28.1</td>\n",
+              "      <td>0.167</td>\n",
+              "      <td>21</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>0</td>\n",
+              "      <td>137</td>\n",
+              "      <td>40</td>\n",
+              "      <td>35</td>\n",
+              "      <td>168</td>\n",
+              "      <td>43.1</td>\n",
+              "      <td>2.288</td>\n",
+              "      <td>33</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>...</th>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>763</th>\n",
+              "      <td>10</td>\n",
+              "      <td>101</td>\n",
+              "      <td>76</td>\n",
+              "      <td>48</td>\n",
+              "      <td>180</td>\n",
+              "      <td>32.9</td>\n",
+              "      <td>0.171</td>\n",
+              "      <td>63</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>764</th>\n",
+              "      <td>2</td>\n",
+              "      <td>122</td>\n",
+              "      <td>70</td>\n",
+              "      <td>27</td>\n",
+              "      <td>0</td>\n",
+              "      <td>36.8</td>\n",
+              "      <td>0.340</td>\n",
+              "      <td>27</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>765</th>\n",
+              "      <td>5</td>\n",
+              "      <td>121</td>\n",
+              "      <td>72</td>\n",
+              "      <td>23</td>\n",
+              "      <td>112</td>\n",
+              "      <td>26.2</td>\n",
+              "      <td>0.245</td>\n",
+              "      <td>30</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>766</th>\n",
+              "      <td>1</td>\n",
+              "      <td>126</td>\n",
+              "      <td>60</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>30.1</td>\n",
+              "      <td>0.349</td>\n",
+              "      <td>47</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>767</th>\n",
+              "      <td>1</td>\n",
+              "      <td>93</td>\n",
+              "      <td>70</td>\n",
+              "      <td>31</td>\n",
+              "      <td>0</td>\n",
+              "      <td>30.4</td>\n",
+              "      <td>0.315</td>\n",
+              "      <td>23</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "<p>768 rows × 9 columns</p>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "     Pregnancies  Glucose  ...  Age  Outcome\n",
+              "0              6      148  ...   50        1\n",
+              "1              1       85  ...   31        0\n",
+              "2              8      183  ...   32        1\n",
+              "3              1       89  ...   21        0\n",
+              "4              0      137  ...   33        1\n",
+              "..           ...      ...  ...  ...      ...\n",
+              "763           10      101  ...   63        0\n",
+              "764            2      122  ...   27        0\n",
+              "765            5      121  ...   30        0\n",
+              "766            1      126  ...   47        1\n",
+              "767            1       93  ...   23        0\n",
+              "\n",
+              "[768 rows x 9 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 1
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "65PJHDjFA_HV",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 195
+        },
+        "outputId": "81788735-4ade-4b79-9a67-e6e3f5e0a3c7"
+      },
+      "source": [
+        "ss.head()"
+      ],
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>Pregnancies</th>\n",
+              "      <th>Glucose</th>\n",
+              "      <th>BloodPressure</th>\n",
+              "      <th>SkinThickness</th>\n",
+              "      <th>Insulin</th>\n",
+              "      <th>BMI</th>\n",
+              "      <th>DiabetesPedigreeFunction</th>\n",
+              "      <th>Age</th>\n",
+              "      <th>Outcome</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>6</td>\n",
+              "      <td>148</td>\n",
+              "      <td>72</td>\n",
+              "      <td>35</td>\n",
+              "      <td>0</td>\n",
+              "      <td>33.6</td>\n",
+              "      <td>0.627</td>\n",
+              "      <td>50</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>1</td>\n",
+              "      <td>85</td>\n",
+              "      <td>66</td>\n",
+              "      <td>29</td>\n",
+              "      <td>0</td>\n",
+              "      <td>26.6</td>\n",
+              "      <td>0.351</td>\n",
+              "      <td>31</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>8</td>\n",
+              "      <td>183</td>\n",
+              "      <td>64</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>23.3</td>\n",
+              "      <td>0.672</td>\n",
+              "      <td>32</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>1</td>\n",
+              "      <td>89</td>\n",
+              "      <td>66</td>\n",
+              "      <td>23</td>\n",
+              "      <td>94</td>\n",
+              "      <td>28.1</td>\n",
+              "      <td>0.167</td>\n",
+              "      <td>21</td>\n",
+              "      <td>0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>0</td>\n",
+              "      <td>137</td>\n",
+              "      <td>40</td>\n",
+              "      <td>35</td>\n",
+              "      <td>168</td>\n",
+              "      <td>43.1</td>\n",
+              "      <td>2.288</td>\n",
+              "      <td>33</td>\n",
+              "      <td>1</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "   Pregnancies  Glucose  BloodPressure  ...  DiabetesPedigreeFunction  Age  Outcome\n",
+              "0            6      148             72  ...                     0.627   50        1\n",
+              "1            1       85             66  ...                     0.351   31        0\n",
+              "2            8      183             64  ...                     0.672   32        1\n",
+              "3            1       89             66  ...                     0.167   21        0\n",
+              "4            0      137             40  ...                     2.288   33        1\n",
+              "\n",
+              "[5 rows x 9 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 2
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ou6Hm-HhBIUr",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "x=ss[[\"Pregnancies\",\"Glucose\",\"BloodPressure\",\"SkinThickness\",\"Insulin\",\"BMI\",\"DiabetesPedigreeFunction\",\"Age\"]]\n",
+        "y=ss[[\"Outcome\"]]"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "GtYfWHvKB_rK",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=42)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "b6_Xa1eXCmOq",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 70
+        },
+        "outputId": "3610c4b0-e89a-4093-ad16-690895fab7ce"
+      },
+      "source": [
+        "model=rdc.fit(x_train,y_train)"
+      ],
+      "execution_count": 13,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "/usr/local/lib/python3.6/dist-packages/ipykernel_launcher.py:1: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples,), for example using ravel().\n",
+            "  \"\"\"Entry point for launching an IPython kernel.\n"
+          ],
+          "name": "stderr"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "U70rvplIFJZL",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "rdc=RandomForestClassifier(n_estimators=9)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sc4Xa0UPFck8",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "y_pred1=model.predict(x_test)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "j7eGqyTtFk9Y",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "d12e9bbe-a3d1-44cc-9ad2-28d39e736a14"
+      },
+      "source": [
+        "print(\"accurasy:\",metrics.accuracy_score(y_test,y_pred1))"
+      ],
+      "execution_count": 22,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "accurasy: 0.7337662337662337\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ZSgaVGMYGtvF",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "abc=AdaBoostClassifier()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Bd7cbP__Gysf",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 70
+        },
+        "outputId": "9363e05a-73e5-40d5-9d2b-bb49eeb2e021"
+      },
+      "source": [
+        "model2=abc.fit(x_train,y_train)"
+      ],
+      "execution_count": 27,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "/usr/local/lib/python3.6/dist-packages/sklearn/utils/validation.py:760: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().\n",
+            "  y = column_or_1d(y, warn=True)\n"
+          ],
+          "name": "stderr"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "O7UasrKIG6zl",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "y_pred2=model2.predict(x_test)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "99LgSVL0HCL8",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "4749fdfb-1a1e-42db-ff7d-15cb0f6adf5b"
+      },
+      "source": [
+        "print(\"accurasy:\",metrics.accuracy_score(y_test,y_pred2))"
+      ],
+      "execution_count": 31,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "accurasy: 0.7337662337662337\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "-Nz2y_dOHkIU",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "dtc=DecisionTreeClassifier()"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "WB_BNaUhHJD0",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "model3=dtc.fit(x_train,y_train)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "NB2DNN5EHyPO",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "y_pred3=model3.predict(x_test)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "uuhESiHzH6tL",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "8580a19d-c580-40da-edc7-20afca7aeb89"
+      },
+      "source": [
+        "print(\"accurasy:\",metrics.accuracy_score(y_test,y_pred3))"
+      ],
+      "execution_count": 36,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "accurasy: 0.7792207792207793\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "7NJTPdfxITZv",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "#conclusion:\n",
+        "#random  forest classifier is performing better than adaboost classifier and decision tree classifier because its accuracy is more\n",
+        "#random forest will reduce variance part of error rather than bias part\n",
+        "#performance of the classifier is depend upon the application and nature of the available data cell"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    }
+  ]
+}
